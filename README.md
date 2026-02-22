@@ -1,4 +1,4 @@
-# Cloud Task Manager - Książka Azure w Praktyce by Mateusz Kacyna,S 100 397
+# Cloud Task Manager - Książka Azure w Praktyce by Mateusz Kacyna, 100 397
  
 Projekt natywnej aplikacji chmurowej realizowany w architekturze 3-warstwowej.
  
