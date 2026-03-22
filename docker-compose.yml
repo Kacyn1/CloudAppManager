@@ -1,7 +1,6 @@
 version: "3.9"
 
 services:
-
   # Warstwa Prezentacji (React)
   frontend:
     build: ./frontend
@@ -21,6 +20,7 @@ services:
       - "8081:8080" # Mapujemy port 8080 kontenera (standard .NET 9) na 8081 hosta
     environment:
       - ASPNETCORE_HTTP_PORTS=8080
+      # UWAGA: Hasło w tekście jawnym zostanie zabezpieczone w Rozdziale 9 przy użyciu Docker Secrets
       - ConnectionStrings__DefaultConnection=Server=cloud-db;Database=CloudAppDb;User Id=sa;Password=StrongPassword123!;TrustServerCertificate=True
     networks:
       - cloud-network
@@ -36,9 +36,16 @@ services:
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
+    volumes:
+      - sql-data:/var/opt/mssql
     networks:
       - cloud-network
+
+volumes:
+  sql-data:
 
 networks:
   cloud-network:
     driver: bridge
+
+ 
