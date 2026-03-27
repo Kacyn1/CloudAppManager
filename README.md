@@ -16,5 +16,6 @@ Ten projekt został zaplanowany z myślą o usługach PaaS (Platform as a Servic
 * [x] **Artefakt 2:** Konfiguracja środowiska Docker (w trakcie...).
 * [x] **Artefakt 3:** Działająca warstwa prezentacji. 
 * [x] **Artefakt 4:** Działający backend + frontend(nietrwałe połączenie z bazą). 
-* [x] **Artefakt 5:** Update artefaktu 5
+* [x] **Artefakt 5:** Update artefaktu 5 na zajęciach.
+* [x] **Artefakt 6:** Wdrożenie na azure frontendu i backendu w domu po cięzkim boju.
 > **Informacja:** Ten plik będzie ewoluował. W kolejnych etapach dodamy tutaj sekcje 'Quick Start', opis zmiennych środowiskowych oraz instrukcję wdrożenia (CI/CD).

@@ -19,8 +19,12 @@ var connectionString= Environment.GetEnvironmentVariable("DB_CONNECTION_STRING")
 
 // 4. Rejestracja bazy danych MS SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString)
-);
+    options.UseSqlServer(connectionString, 
+        sqlOptions => sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(10),
+            errorNumbersToAdd: null)
+    ));
 
 // 5. Konfiguracja CORS
 builder.Services.AddCors(options =>
