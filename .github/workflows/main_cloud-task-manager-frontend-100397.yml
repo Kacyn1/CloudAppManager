@@ -1,4 +1,4 @@
-name: Build and deploy frontend to Azure Web App - cloud-task-manager-frontend-100397
+name: Build and deploy Node.js app to Azure Web App - cloud-task-manager-frontend-100397
 
 on:
   push:
@@ -9,47 +9,38 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: '24.x'
+          node-version: '18'
 
       - name: Install dependencies
-        working-directory: ./frontend
         run: npm install
-
-      - name: Build frontend
         working-directory: ./frontend
-        env:
-          VITE_API_URL: https://cloud-task-manager-api-100397-epb7cyf0grdcc2a0.swedencentral-01.azurewebsites.net/api
+
+      - name: Build app
         run: npm run build
+        working-directory: ./frontend
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: frontend-app
+          name: node-app
           path: ./frontend/dist
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    permissions:
-      id-token: write
-      contents: read
 
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: frontend-app
-          path: .
+          name: node-app
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -58,9 +49,8 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_0DD5646AFE89445988A4D97242A6C223 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A6B1DAEA823545FB90509F8BB60F735B }}
 
-      - name: Deploy to Azure Web App
+      - name: Deploy to Azure
         uses: azure/webapps-deploy@v3
         with:
-          app-name: cloud-task-manager-frontend-100397
-          slot-name: Production
+          app-name: 'cloud-task-manager-frontend-100397'
           package: .
