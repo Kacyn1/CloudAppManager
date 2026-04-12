@@ -19,4 +19,5 @@ Ten projekt został zaplanowany z myślą o usługach PaaS (Platform as a Servic
 * [x] **Artefakt 5:** Update artefaktu 5 na zajęciach.
 * [x] **Artefakt 6:** Wdrożenie na azure frontendu i backendu w domu po cięzkim boju.
 * [x] **Artefakt 7:** Update głównie zasad bezpieczeństwa.
+* [x] **Artefakt 8:** Update- niepełny brak task'a 8.4 jako dodanie przycisku "Usuń", ale reszta jest zrobiona.
 > **Informacja:** Ten plik będzie ewoluował. W kolejnych etapach dodamy tutaj sekcje 'Quick Start', opis zmiennych środowiskowych oraz instrukcję wdrożenia (CI/CD).
