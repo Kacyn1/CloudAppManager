@@ -1,32 +1,41 @@
 using CloudBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using CloudBackend.Models;
+using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
+if (builder.Environment.IsProduction())
+{
+    var vaultName = builder.Configuration["KeyVaultName"];
+
+    if (!string.IsNullOrWhiteSpace(vaultName))
+    {
+        var keyVaultEndpoint = new Uri($"https://{vaultName}.vault.azure.net/");
+        builder.Configuration.AddAzureKeyVault(
+            keyVaultEndpoint,
+            new DefaultAzureCredential());
+    }
+}
+
 // --- SEKCJA USŁUG (Dependency Injection) ---
 
-// 1. Rejestracja Kontrolerów
 builder.Services.AddControllers();
 
-// 2. Dokumentacja API (Swagger/OpenAPI)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// 3. Pobranie Connection Stringa
-var connectionString= Environment.GetEnvironmentVariable("DB_CONNECTION_STRING")
-?? builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-// 4. Rejestracja bazy danych MS SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString, 
+    options.UseSqlServer(connectionString,
         sqlOptions => sqlOptions.EnableRetryOnFailure(
             maxRetryCount: 5,
             maxRetryDelay: TimeSpan.FromSeconds(10),
             errorNumbersToAdd: null)
     ));
 
-// 5. Konfiguracja CORS
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -39,7 +48,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// --- AUTOMATYCZNE TWORZENIE BAZY I DANYCH ---
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -48,10 +56,8 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<AppDbContext>();
 
-        // Tworzy bazę i tabele, jeśli ich nie ma
         context.Database.EnsureCreated();
 
-        // Dodaje startowe dane, jeśli tabela jest pusta
         if (!context.Tasks.Any())
         {
             context.Tasks.AddRange(
@@ -67,7 +73,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// --- SEKCJA POTOKU HTTP (Middleware) ---
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -75,7 +80,6 @@ app.UseSwaggerUI(c =>
     c.RoutePrefix = string.Empty;
 });
 
-// app.UseHttpsRedirection(); // wyłączone dla nauki
 app.UseCors();
 app.MapControllers();
 
